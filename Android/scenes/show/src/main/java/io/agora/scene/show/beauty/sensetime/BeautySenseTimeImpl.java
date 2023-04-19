@@ -108,8 +108,9 @@ public class BeautySenseTimeImpl extends IBeautyProcessor {
         sdkIsInit = false;
     }
 
+
     @Override
-    public boolean onCaptureVideoFrame(VideoFrame videoFrame) {
+    public boolean onCaptureVideoFrame(int type, VideoFrame videoFrame) {
         if (!isEnable() || isReleased) {
             if (shouldMirror) {
                 shouldMirror = false;

@@ -10,6 +10,10 @@ android {
     packagingOptions {
         pickFirst 'lib/*/libc++_shared.so'
     }
+
+    lint {
+        baseline = file("lint-baseline.xml")
+    }
 }
 
 dependencies {

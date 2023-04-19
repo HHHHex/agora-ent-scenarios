@@ -109,11 +109,10 @@ abstract class IBeautyProcessor: IVideoFrameObserver {
 
     // IVideoFrameObserver implement
 
-    override fun onPreEncodeVideoFrame(videoFrame: VideoFrame?) = false
 
-    override fun onScreenCaptureVideoFrame(videoFrame: VideoFrame?) = false
+    override fun onPreEncodeVideoFrame(type: Int, videoFrame: VideoFrame?) = false
 
-    override fun onPreEncodeScreenVideoFrame(videoFrame: VideoFrame?) = false
+    override fun onCaptureVideoFrame(type: Int, videoFrame: VideoFrame?) = false
 
     override fun onMediaPlayerVideoFrame(videoFrame: VideoFrame?, mediaPlayerId: Int) = false
 
