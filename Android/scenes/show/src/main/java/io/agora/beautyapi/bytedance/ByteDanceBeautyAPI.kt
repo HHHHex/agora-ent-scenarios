@@ -22,28 +22,40 @@
  * SOFTWARE.
  */
 
-package io.agora.beautyapi.sensetime
+package io.agora.beautyapi.bytedance
 
+import android.content.Context
 import android.view.View
+import com.effectsar.labcv.effectsdk.RenderManager
 import io.agora.base.VideoFrame
-import io.agora.beautyapi.sensetime.utils.STRenderKit
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcEngine
+
+const val VERSION = "1.0.4"
 
 enum class CaptureMode{
     Agora, // 使用声网内部的祼数据接口进行处理
     Custom // 自定义模式，需要自己调用onFrame接口将原始视频帧传给BeautyAPI做处理
 }
 
-interface IEventCallback{
-
+data class EventCallback(
     /**
      * 统计数据回调，每处理完一帧后会回调一次
      *
      * @param stats 美颜统计数据
      */
-    fun onBeautyStats(stats: BeautyStats)
-}
+    val onBeautyStats: ((stats: BeautyStats)->Unit)? = null,
+
+    /**
+     * effectManager在GL线程里初始化完成后回调
+     */
+    val onEffectInitialized: (()->Unit)? = null,
+
+    /**
+     * effectManager在GL线程里销毁完成后回调
+     */
+    val onEffectDestroyed: (()->Unit)? = null
+)
 
 data class BeautyStats(
     val minCostMs:Long, // 统计区间内的最小值
@@ -51,13 +63,30 @@ data class BeautyStats(
     val averageCostMs: Long // 统计区间内的平均值
 )
 
+enum class MirrorMode {
+
+    // 没有镜像正常画面的定义：前置拍到画面和手机看到画面是左右不一致的，后置拍到画面和手机看到画面是左右一致的
+
+    MIRROR_LOCAL_REMOTE, //本地远端都镜像，前置默认，本地和远端贴纸都正常
+    MIRROR_LOCAL_ONLY, // 仅本地镜像，远端不镜像，，远端贴纸正常，本地贴纸镜像。用于打电话场景，电商直播场景(保证电商直播后面的告示牌文字是正的)；这种模式因为本地远端是反的，所以肯定有一边的文字贴纸方向会是反的
+    MIRROR_REMOTE_ONLY, // 仅远端镜像，本地不镜像，远端贴纸正常，本地贴纸镜像
+    MIRROR_NONE // 本地远端都不镜像，后置默认，本地和远端贴纸都正常
+}
+
+data class CameraConfig(
+    val frontMirror: MirrorMode = MirrorMode.MIRROR_LOCAL_REMOTE, // 前置默认镜像：本地远端都镜像
+    val backMirror: MirrorMode = MirrorMode.MIRROR_NONE // 后置默认镜像：本地远端都不镜像
+)
+
 data class Config(
+    val context: Context, // Android Context上下文
     val rtcEngine: RtcEngine, // 声网Rtc引擎
-    val stRenderKit: STRenderKit, // 美颜SDK处理句柄
-    val eventCallback: IEventCallback? = null, // 事件回调
+    val renderManager: RenderManager, // 美颜SDK处理句柄
+    val eventCallback: EventCallback? = null, // 事件回调
     val captureMode: CaptureMode = CaptureMode.Agora, // 处理模式
     val statsDuration: Long = 1000, // 统计区间
-    val statsEnable: Boolean = false // 是否开启统计
+    val statsEnable: Boolean = false, // 是否开启统计
+    val cameraConfig: CameraConfig = CameraConfig() // 摄像头镜像配置
 )
 
 enum class ErrorCode(val value: Int) {
@@ -76,9 +105,9 @@ enum class BeautyPreset {
     DEFAULT // 默认的
 }
 
-fun createSenseTimeBeautyAPI(): SenseTimeBeautyAPI = SenseTimeBeautyAPIImpl()
+fun createByteDanceBeautyAPI(): ByteDanceBeautyAPI = ByteDanceBeautyAPIImpl()
 
-interface SenseTimeBeautyAPI {
+interface ByteDanceBeautyAPI {
 
     /**
      * 初始化API
@@ -118,12 +147,37 @@ interface SenseTimeBeautyAPI {
      *
      * @return 见ErrorCode
      */
-    fun setBeautyPreset(preset: BeautyPreset = BeautyPreset.DEFAULT): Int
+    fun setBeautyPreset(
+        preset: BeautyPreset = BeautyPreset.DEFAULT,
+        beautyNodePath: String,
+        beauty4ItemNodePath: String,
+        reSharpNodePath: String
+    ): Int
+
+    /**
+     * 更新摄像头配置
+     */
+    fun updateCameraConfig(config: CameraConfig): Int
+
+    /**
+     * 是否是前置摄像头
+     * PS：只在美颜处理中才能知道准确的值，否则会一直是true
+     */
+    fun isFrontCamera(): Boolean
+
+    fun getMirrorApplied(): Boolean
 
     /**
      * 私参配置，用于不对外api的调用，多用于测试
      */
     fun setParameters(key: String, value: String)
+
+    /**
+     * 在处理线程里执行操作
+     *
+     * @param run 操作run
+     */
+    fun runOnProcessThread(run: ()->Unit);
 
     /**
      * 释放资源，一旦释放后这个实例将无法使用

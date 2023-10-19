@@ -25,13 +25,13 @@ public class FileUtils {
 
     public static String copyFileFromAssets(Context context, String assetsFilePath, String storagePath) {
         if (TextUtils.isEmpty(storagePath)) {
-            return null;
+            return "";
         } else if (storagePath.endsWith(SEPARATOR)) {
             storagePath = storagePath.substring(0, storagePath.length() - 1);
         }
 
         if (TextUtils.isEmpty(assetsFilePath) || assetsFilePath.endsWith(SEPARATOR)) {
-            return null;
+            return "";
         }
 
         String storageFilePath = storagePath + SEPARATOR + assetsFilePath;
@@ -47,7 +47,7 @@ public class FileUtils {
             readInputStream(storageFilePath, inputStream);
         } catch (IOException e) {
             CommonBaseLogger.e("FileUtils", e.toString());
-            return null;
+            return "";
         }
         return storageFilePath;
     }

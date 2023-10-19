@@ -22,11 +22,11 @@
  * SOFTWARE.
  */
 
-package io.agora.beautyapi.sensetime.utils
+package io.agora.beautyapi.bytedance.utils
 
 import android.os.Handler
 import android.os.Looper
-import io.agora.beautyapi.sensetime.BeautyStats
+import io.agora.beautyapi.bytedance.BeautyStats
 import kotlin.math.max
 import kotlin.math.min
 

@@ -64,7 +64,16 @@ object BeautyCache {
             put(ITEM_ID_ADJUST_CLARITY, defaultItemValueMap[ITEM_ID_ADJUST_CLARITY] ?: 0.0f)
         }
         cacheItemOperation.apply {
-            clear()
+            put(
+                GROUP_ID_EFFECT, arrayListOf(
+                    ITEM_ID_EFFECT_NONE
+                )
+            )
+            put(
+                GROUP_ID_STICKER, arrayListOf(
+                    ITEM_ID_STICKER_NONE
+                )
+            )
             put(
                 GROUP_ID_BEAUTY, arrayListOf(
                     ITEM_ID_BEAUTY_WHITEN,

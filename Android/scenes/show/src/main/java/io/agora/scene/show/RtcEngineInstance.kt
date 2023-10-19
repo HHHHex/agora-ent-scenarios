@@ -8,8 +8,8 @@ import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoEncoderConfiguration
 import io.agora.rtc2.video.VirtualBackgroundSource
 import io.agora.scene.base.component.AgoraApplication
+import io.agora.scene.show.beauty.BeautyProcessor
 import io.agora.scene.show.beauty.IBeautyProcessor
-import io.agora.scene.show.beauty.sensetime.BeautySenseTimeImpl
 import io.agora.scene.show.debugSettings.DebugSettingModel
 import io.agora.scene.show.videoSwitcherAPI.VideoSwitcher
 import java.util.concurrent.Executors
@@ -33,7 +33,7 @@ object RtcEngineInstance {
     val beautyProcessor: IBeautyProcessor
         get() {
             if (innerBeautyProcessor == null) {
-                innerBeautyProcessor = BeautySenseTimeImpl(AgoraApplication.the())
+                innerBeautyProcessor = BeautyProcessor(AgoraApplication.the())
             }
             return innerBeautyProcessor!!
         }

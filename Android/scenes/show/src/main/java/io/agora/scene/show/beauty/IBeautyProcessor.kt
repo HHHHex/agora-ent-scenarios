@@ -1,9 +1,7 @@
 package io.agora.scene.show.beauty
 
 import android.util.Log
-import io.agora.beautyapi.sensetime.CaptureMode
-import io.agora.beautyapi.sensetime.IEventCallback
-import io.agora.beautyapi.sensetime.SenseTimeBeautyAPI
+import android.view.View
 import io.agora.rtc2.RtcEngine
 import java.util.concurrent.Executors
 
@@ -13,12 +11,9 @@ abstract class IBeautyProcessor {
     @Volatile
     private var isBeautyEnable = true
 
-    abstract fun initialize(
-        rtcEngine: RtcEngine,
-        captureMode: CaptureMode,
-        statsEnable: Boolean,
-        eventCallback: IEventCallback
-    )
+    abstract fun initialize(rtcEngine: RtcEngine)
+
+    abstract fun setupLocalVideo(videoView: View, renderMode: Int)
 
     protected abstract fun setFaceBeautifyAfterCached(itemId: Int, intensity: Float)
 
@@ -28,7 +23,6 @@ abstract class IBeautyProcessor {
 
     protected abstract fun setStickerAfterCached(itemId: Int)
 
-    abstract fun getSenseTimeBeautyAPI(): SenseTimeBeautyAPI
 
     protected fun restore() {
         BeautyCache.restoreByOperation(this)
@@ -51,6 +45,9 @@ abstract class IBeautyProcessor {
     }
 
     fun isBeautyEnable() = isBeautyEnable
+
+    fun hasLicense() = BytedanceBeautySDK.hasLicense()
+
 
     // 设置绿幕强度（0 ～ 1）
     fun setBg(intensity: Float) {

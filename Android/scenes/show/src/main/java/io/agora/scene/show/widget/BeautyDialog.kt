@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
@@ -19,7 +18,39 @@ import io.agora.scene.base.utils.FileUtils
 import io.agora.scene.base.utils.ToastUtils
 import io.agora.scene.show.R
 import io.agora.scene.show.RtcEngineInstance
-import io.agora.scene.show.beauty.*
+import io.agora.scene.show.beauty.BeautyCache
+import io.agora.scene.show.beauty.GROUP_ID_ADJUST
+import io.agora.scene.show.beauty.GROUP_ID_BEAUTY
+import io.agora.scene.show.beauty.GROUP_ID_EFFECT
+import io.agora.scene.show.beauty.GROUP_ID_FILTER
+import io.agora.scene.show.beauty.GROUP_ID_STICKER
+import io.agora.scene.show.beauty.GROUP_ID_VIRTUAL_BG
+import io.agora.scene.show.beauty.IBeautyProcessor
+import io.agora.scene.show.beauty.ITEM_ID_ADJUST_NONE
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_BRIGHT_EYE
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_CHEEKBONE
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_CHIN
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_EYE
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_FOREHEAD
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_JAWBONE
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_MOUTH
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_NONE
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_NOSE
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_OVERALL
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_REMOVE_DARK_CIRCLES
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_REMOVE_NASOLABIAL_FOLDS
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_SMOOTH
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_TEETH
+import io.agora.scene.show.beauty.ITEM_ID_BEAUTY_WHITEN
+import io.agora.scene.show.beauty.ITEM_ID_EFFECT_CWEI
+import io.agora.scene.show.beauty.ITEM_ID_EFFECT_NONE
+import io.agora.scene.show.beauty.ITEM_ID_EFFECT_YUANQI
+import io.agora.scene.show.beauty.ITEM_ID_FILTER_NONE
+import io.agora.scene.show.beauty.ITEM_ID_STICKER_HUAHUA
+import io.agora.scene.show.beauty.ITEM_ID_STICKER_NONE
+import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_BLUR
+import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_MITAO
+import io.agora.scene.show.beauty.ITEM_ID_VIRTUAL_BG_NONE
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogBottomBinding
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogItemBinding
 import io.agora.scene.show.databinding.ShowWidgetBeautyDialogPageBinding
@@ -59,11 +90,11 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                     R.string.show_beauty_item_beauty_whiten,
                     R.mipmap.show_beauty_ic_face_meibai
                 ),
-                ItemInfo(
-                    ITEM_ID_BEAUTY_REDDEN,
-                    R.string.show_beauty_item_beauty_redden,
-                    R.mipmap.show_beauty_ic_face_redden
-                ),
+//                ItemInfo(
+//                    ITEM_ID_BEAUTY_REDDEN,
+//                    R.string.show_beauty_item_beauty_redden,
+//                    R.mipmap.show_beauty_ic_face_redden
+//                ),
                 ItemInfo(
                     ITEM_ID_BEAUTY_OVERALL,
                     R.string.show_beauty_item_beauty_overall,
@@ -126,35 +157,35 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
                 )
             )
         ),
-        GroupInfo(
-            GROUP_ID_ADJUST, R.string.show_beauty_group_adjust, arrayListOf(
-                ItemInfo(
-                    ITEM_ID_ADJUST_NONE,
-                    R.string.show_beauty_item_none,
-                    R.mipmap.show_beauty_ic_none
-                ),
-                ItemInfo(
-                    ITEM_ID_ADJUST_CONTRAST,
-                    R.string.show_beauty_item_adjust_contrast,
-                    R.mipmap.show_beauty_ic_adjust_contrast
-                ),
-                ItemInfo(
-                    ITEM_ID_ADJUST_SATURATION,
-                    R.string.show_beauty_item_adjust_saturation,
-                    R.mipmap.show_beauty_ic_adjust_saturation
-                ),
-                ItemInfo(
-                    ITEM_ID_ADJUST_SHARPEN,
-                    R.string.show_beauty_item_adjust_sharpen,
-                    R.mipmap.show_beauty_ic_adjust_sharp
-                ),
-                ItemInfo(
-                    ITEM_ID_ADJUST_CLARITY,
-                    R.string.show_beauty_item_adjust_clarity,
-                    R.mipmap.show_beauty_ic_adjust_clear
-                ),
-            )
-        ),
+//        GroupInfo(
+//            GROUP_ID_ADJUST, R.string.show_beauty_group_adjust, arrayListOf(
+//                ItemInfo(
+//                    ITEM_ID_ADJUST_NONE,
+//                    R.string.show_beauty_item_none,
+//                    R.mipmap.show_beauty_ic_none
+//                ),
+//                ItemInfo(
+//                    ITEM_ID_ADJUST_CONTRAST,
+//                    R.string.show_beauty_item_adjust_contrast,
+//                    R.mipmap.show_beauty_ic_adjust_contrast
+//                ),
+//                ItemInfo(
+//                    ITEM_ID_ADJUST_SATURATION,
+//                    R.string.show_beauty_item_adjust_saturation,
+//                    R.mipmap.show_beauty_ic_adjust_saturation
+//                ),
+//                ItemInfo(
+//                    ITEM_ID_ADJUST_SHARPEN,
+//                    R.string.show_beauty_item_adjust_sharpen,
+//                    R.mipmap.show_beauty_ic_adjust_sharp
+//                ),
+//                ItemInfo(
+//                    ITEM_ID_ADJUST_CLARITY,
+//                    R.string.show_beauty_item_adjust_clarity,
+//                    R.mipmap.show_beauty_ic_adjust_clear
+//                ),
+//            )
+//        ),
         GroupInfo(
             GROUP_ID_EFFECT, R.string.show_beauty_group_effect, arrayListOf(
                 ItemInfo(
@@ -329,7 +360,7 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
 
         mTopBinding.root.isVisible = false
         mTopBinding.ivCompare.setOnClickListener {
-            if (beautyProcessor != null) {
+            if (beautyProcessor?.hasLicense() == true) {
                 val old = beautyProcessor?.isBeautyEnable() ?: true
                 beautyProcessor?.setBeautyEnable(!old)
             } else {
@@ -351,11 +382,7 @@ class BeautyDialog constructor(context: Context) : BottomDarkDialog(context) {
     }
 
     fun setBeautyProcessor(processor: IBeautyProcessor) {
-        try { // 美颜license是否存在
-            context.assets.open("license/SenseME.lic").use { inputStream ->
-                this.beautyProcessor = processor
-            }
-        } catch (_: Exception) {}
+        this.beautyProcessor = processor
     }
 
     private fun refreshTopLayout(groupId: Int, itemId: Int) {

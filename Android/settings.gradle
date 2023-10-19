@@ -39,9 +39,7 @@ include ':common:ui-widget'
  * 秀场直播
  */
 include ':scenes:show'
-include ':scenes:show:aars:SenseArSourceManager'
-include ':scenes:show:aars:STMobileJNI'
-include ':scenes:show:aars:HardwareBuffer'
+include ':scenes:show:aars:EffectAAR'
 
 
 

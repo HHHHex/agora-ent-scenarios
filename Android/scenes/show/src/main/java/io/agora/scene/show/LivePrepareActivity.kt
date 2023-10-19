@@ -2,7 +2,6 @@ package io.agora.scene.show
 
 import android.content.ClipData
 import android.content.ClipboardManager
-import android.content.res.AssetManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
@@ -16,7 +15,6 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import io.agora.beautyapi.sensetime.*
 import io.agora.rtc2.Constants
 import io.agora.rtc2.RtcConnection
 import io.agora.rtc2.video.CameraCapturerConfiguration
@@ -102,26 +100,15 @@ class LivePrepareActivity : BaseViewBindingActivity<ShowLivePrepareActivityBindi
         }
         mBeautyProcessor.initialize(
             rtcEngine = mRtcEngine,
-            captureMode = CaptureMode.Agora,
-            statsEnable = true,
-            eventCallback = object : IEventCallback {
-                override fun onBeautyStats(stats: BeautyStats) {
-                }
-            }
         )
-        var licenseExists = false
-        try { // 美颜license是否存在
-            this.assets.open("license/SenseME.lic").use { inputStream ->
-                licenseExists = true
-            }
-        } catch (_: Exception) {}
+        var licenseExists = mBeautyProcessor.hasLicense()
         // 低端机 或 无证书则关闭美颜
         if (mRtcEngine.queryDeviceScore() >= 75 && licenseExists) {
             mBeautyProcessor.setBeautyEnable(true)
         } else {
             mBeautyProcessor.setBeautyEnable(false)
         }
-        mBeautyProcessor.getSenseTimeBeautyAPI().setupLocalVideo(SurfaceView(this).apply {
+        mBeautyProcessor.setupLocalVideo(SurfaceView(this).apply {
             binding.flVideoContainer.addView(this)
         }, Constants.RENDER_MODE_HIDDEN)
 
