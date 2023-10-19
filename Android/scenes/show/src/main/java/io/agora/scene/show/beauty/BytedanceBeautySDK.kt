@@ -60,7 +60,7 @@ object BytedanceBeautySDK {
         }
     }
 
-    fun hasLicense() = licensePath.isNotEmpty()
+    fun hasLicense() = context?.assets?.list("$assetsPath/LicenseBag.bundle")?.find { it.contains(LICENSE_NAME) } != null
 
     // GL Thread
     fun initEffect(context: Context){
