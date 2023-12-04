@@ -781,7 +781,7 @@ object VideoSetting {
     private fun updateRTCAudioSetting(SR: SuperResolution? = null) {
         val rtcEngine = RtcEngineInstance.rtcEngine
         if (currAudienceDeviceLevel == DeviceLevel.Low) {
-            ToastUtils.showToast(R.string.show_audience_sr_tips)
+            //ToastUtils.showToast(R.string.show_audience_sr_tips)
         }
         SR?.let {
             val enableSR = currAudienceEnhanceSwitch && SR != SuperResolution.SR_NONE

@@ -48,9 +48,10 @@ class RoomListActivity : AppCompatActivity() {
         //启动机器人
         mService.startCloudPlayer()
         //获取万能token
-        fetchUniversalToken ({
-            preloadChannels()
-        })
+//        fetchUniversalToken ({
+//            preloadChannels()
+//        })
+        preloadChannels()
         initView()
         initVideoSettings()
     }
@@ -164,43 +165,34 @@ class RoomListActivity : AppCompatActivity() {
                                 UserManager.getInstance().user.id.toInt()
                             )
                         })
-                        if (RtcEngineInstance.generalToken() == "") {
-                            fetchUniversalToken({
-                            }, {
-                                ToastUtils.showToast("Fetch Token Failed")
-                            })
-                        } else {
-                            if (mRtcEngine.queryDeviceScore() < 75) {
-                                mRtcEngine.setParameters("{\"che.hardware_decoding\": 1}")
-                                mRtcEngine.setParameters("{\"rtc.video.decoder_out_byte_frame\": true}")
-                            }
-                            val channelMediaOptions = ChannelMediaOptions()
-                            channelMediaOptions.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
-                            channelMediaOptions.autoSubscribeVideo = true
-                            channelMediaOptions.autoSubscribeAudio = true
-                            channelMediaOptions.publishCameraTrack = false
-                            channelMediaOptions.publishMicrophoneTrack = false
-                            // 如果是观众 把 ChannelMediaOptions 的 audienceLatencyLevel 设置为 AUDIENCE_LATENCY_LEVEL_LOW_LATENCY（超低延时）
-                            channelMediaOptions.audienceLatencyLevel = Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
-                            mRtcVideoSwitcher.joinChannel(
-                                rtcConnection,
-                                channelMediaOptions,
-                                RtcEngineInstance.generalToken(),
-                                null,
-                                true
-                            )
-                            mRtcVideoSwitcher.preJoinChannel(rtcConnection)
-                            mRtcEngine.adjustUserPlaybackSignalVolumeEx(roomInfo.ownerId.toInt(), 0, rtcConnection)
-                            mService.startCloudPlayer()
+                        if (mRtcEngine.queryDeviceScore() < 75) {
+                            mRtcEngine.setParameters("{\"che.hardware_decoding\": 1}")
+                            mRtcEngine.setParameters("{\"rtc.video.decoder_out_byte_frame\": true}")
                         }
+                        val channelMediaOptions = ChannelMediaOptions()
+                        channelMediaOptions.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
+                        channelMediaOptions.autoSubscribeVideo = true
+                        channelMediaOptions.autoSubscribeAudio = true
+                        channelMediaOptions.publishCameraTrack = false
+                        channelMediaOptions.publishMicrophoneTrack = false
+                        // 如果是观众 把 ChannelMediaOptions 的 audienceLatencyLevel 设置为 AUDIENCE_LATENCY_LEVEL_LOW_LATENCY（超低延时）
+                        channelMediaOptions.audienceLatencyLevel = Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
+                        mRtcVideoSwitcher.joinChannel(
+                            rtcConnection,
+                            channelMediaOptions,
+                            RtcEngineInstance.generalToken(),
+                            null,
+                            true
+                        )
+                        mRtcVideoSwitcher.preJoinChannel(rtcConnection)
+                        mRtcEngine.adjustUserPlaybackSignalVolumeEx(roomInfo.ownerId.toInt(), 0, rtcConnection)
+                        mService.startCloudPlayer()
                     }
                     MotionEvent.ACTION_CANCEL -> {
                         mRtcVideoSwitcher.leaveChannel(rtcConnection, true)
                     }
                     MotionEvent.ACTION_UP -> {
-                        if (RtcEngineInstance.generalToken() != "") {
-                            goLiveDetailActivity(list, position, roomInfo)
-                        }
+                        goLiveDetailActivity(list, position, roomInfo)
                     }
                 }
             }

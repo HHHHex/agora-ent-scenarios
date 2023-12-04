@@ -3,6 +3,7 @@ package io.agora.scene.show
 import io.agora.rtc2.IRtcEngineEventHandler
 import io.agora.rtc2.RtcEngine
 import io.agora.rtc2.RtcEngineConfig
+import io.agora.rtc2.RtcEngineConfig.AreaCode.AREA_CODE_CN
 import io.agora.rtc2.RtcEngineEx
 import io.agora.rtc2.video.CameraCapturerConfiguration
 import io.agora.rtc2.video.VideoEncoderConfiguration
@@ -53,6 +54,7 @@ object RtcEngineInstance {
             if (innerRtcEngine == null) {
                 val config = RtcEngineConfig()
                 config.mContext = AgoraApplication.the()
+                config.mAreaCode = 0xFFFFFFFE.toInt()
                 config.mAppId = io.agora.scene.base.BuildConfig.AGORA_APP_ID
                 config.mEventHandler = object : IRtcEngineEventHandler() {
                     override fun onError(err: Int) {
