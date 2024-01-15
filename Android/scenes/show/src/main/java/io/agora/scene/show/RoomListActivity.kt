@@ -46,7 +46,7 @@ class RoomListActivity : AppCompatActivity() {
         StatusBarUtil.hideStatusBar(window, true)
         setContentView(mBinding.root)
         //启动机器人
-        mService.startCloudPlayer()
+        //mService.startCloudPlayer()
         //获取万能token
 //        fetchUniversalToken ({
 //            preloadChannels()
@@ -186,7 +186,7 @@ class RoomListActivity : AppCompatActivity() {
                         )
                         mRtcVideoSwitcher.preJoinChannel(rtcConnection)
                         mRtcEngine.adjustUserPlaybackSignalVolumeEx(roomInfo.ownerId.toInt(), 0, rtcConnection)
-                        mService.startCloudPlayer()
+                        //mService.startCloudPlayer()
                     }
                     MotionEvent.ACTION_CANCEL -> {
                         mRtcVideoSwitcher.leaveChannel(rtcConnection, true)
