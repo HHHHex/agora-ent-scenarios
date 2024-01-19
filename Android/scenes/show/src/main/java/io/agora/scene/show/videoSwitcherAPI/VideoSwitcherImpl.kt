@@ -3,6 +3,7 @@ package io.agora.scene.show.videoSwitcherAPI
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
+import android.util.Log
 import android.view.TextureView
 import android.view.View
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -158,6 +159,7 @@ class VideoSwitcherImpl constructor(private val rtcEngine: RtcEngineEx) : VideoS
     }
 
     override fun leaveChannel(connection: RtcConnection, force: Boolean): Boolean {
+        Log.d("hugo", "leaveChannel:$force")
         connectionsJoined.removeIf { it.channelId == connection.channelId }
         if (force) {
             ShowLogger.d(tag, "switchRoomState idle2")

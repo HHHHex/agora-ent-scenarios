@@ -210,6 +210,13 @@ class LiveDetailFragment : Fragment() {
             }
         }
 
+        if (mRoomInfo.roomId == "2023001") {
+            mBinding.root.postDelayed({
+                Log.d("hugo", "onBack")
+                onBackPressed()
+            }, 120000)
+        }
+
         startTopLayoutTimer()
     }
 
@@ -1103,9 +1110,9 @@ class LiveDetailFragment : Fragment() {
             error = {
                 if ((it as? RoomException)?.currRoomNo == mRoomInfo.roomId) {
                     runOnUiThread {
-                        destroy(false)
+                        //destroy(false)
                         // 进房Error
-                        showLivingEndLayout() // 进房Error
+                        //showLivingEndLayout() // 进房Error
                         ShowLogger.d("showLivingEndLayout", "join room error!:${it.message}")
                     }
                 }
@@ -1560,6 +1567,7 @@ class LiveDetailFragment : Fragment() {
 
     private fun destroyRtcEngine(isScrolling: Boolean): Boolean {
         if (isRoomOwner) mRtcEngine.stopPreview()
+        Log.d("hugo", "destroyRtcEngine:$isScrolling")
         return mRtcVideoSwitcher.leaveChannel(mMainRtcConnection, !isScrolling)
     }
 

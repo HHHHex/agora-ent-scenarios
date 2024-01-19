@@ -3,6 +3,7 @@ package io.agora.scene.show
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -54,6 +55,78 @@ class RoomListActivity : AppCompatActivity() {
         preloadChannels()
         initView()
         initVideoSettings()
+
+        isActive = true
+        Log.d("hugo", "onCreate")
+        mBinding.root.postDelayed({
+            if (!isActive) return@postDelayed
+            Log.d("hugo", "onTouch")
+            var position = -1
+            for (i in 0 until mRoomAdapter.itemCount) {
+                val roomItem = mRoomAdapter.getItem(i)
+                if (roomItem?.roomId == "2023001") {
+                    position = i
+                    break
+                }
+            }
+
+            if (position != -1) {
+                val viewHolder: RecyclerView.ViewHolder? =
+                    mBinding.rvRooms.findViewHolderForAdapterPosition(position)
+                viewHolder?.itemView?.let { itemView ->
+                    val x = 0 // 设置触摸点的x坐标
+                    val y = 0 // 设置触摸点的y坐标
+
+                    // 模拟抬起事件
+                    val upEvent = MotionEvent.obtain(
+                        SystemClock.uptimeMillis(),
+                        SystemClock.uptimeMillis(),
+                        MotionEvent.ACTION_UP,
+                        x.toFloat(),
+                        y.toFloat(),
+                        0
+                    )
+                    itemView.dispatchTouchEvent(upEvent)
+                }
+            }
+        }, 5000)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        isActive = true
+        Log.d("hugo", "onRestart")
+        mBinding.root.postDelayed({
+            if (!isActive) return@postDelayed
+            Log.d("hugo", "onTouch")
+            var position = -1
+            for (i in 0 until mRoomAdapter.itemCount) {
+                val roomItem = mRoomAdapter.getItem(i)
+                if (roomItem?.roomId == "2023001") {
+                    position = i
+                    break
+                }
+            }
+
+            if (position != -1) {
+                val viewHolder: RecyclerView.ViewHolder? = mBinding.rvRooms.findViewHolderForAdapterPosition(position)
+                viewHolder?.itemView?.let { itemView ->
+                    val x = 0 // 设置触摸点的x坐标
+                    val y = 0 // 设置触摸点的y坐标
+
+                    // 模拟抬起事件
+                    val upEvent = MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, x.toFloat(), y.toFloat(), 0)
+                    itemView.dispatchTouchEvent(upEvent)
+                }
+            }
+        }, 5000)
+    }
+
+    var isActive = false
+    override fun onPause() {
+        super.onPause()
+        Log.d("hugo", "onPause")
+        isActive = false
     }
 
     private fun initView() {
@@ -159,6 +232,42 @@ class RoomListActivity : AppCompatActivity() {
             } else {
                 when (event!!.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        Log.d("hugo", "onTouch ACTION_DOWN")
+//                        mRtcVideoSwitcher.preloadConnections(list.map {
+//                            RtcConnection(
+//                                it.roomId,
+//                                UserManager.getInstance().user.id.toInt()
+//                            )
+//                        })
+//                        if (mRtcEngine.queryDeviceScore() < 75) {
+//                            mRtcEngine.setParameters("{\"che.hardware_decoding\": 1}")
+//                            mRtcEngine.setParameters("{\"rtc.video.decoder_out_byte_frame\": true}")
+//                        }
+//                        val channelMediaOptions = ChannelMediaOptions()
+//                        channelMediaOptions.clientRoleType = Constants.CLIENT_ROLE_AUDIENCE
+//                        channelMediaOptions.autoSubscribeVideo = true
+//                        channelMediaOptions.autoSubscribeAudio = true
+//                        channelMediaOptions.publishCameraTrack = false
+//                        channelMediaOptions.publishMicrophoneTrack = false
+//                        // 如果是观众 把 ChannelMediaOptions 的 audienceLatencyLevel 设置为 AUDIENCE_LATENCY_LEVEL_LOW_LATENCY（超低延时）
+//                        channelMediaOptions.audienceLatencyLevel = Constants.AUDIENCE_LATENCY_LEVEL_LOW_LATENCY
+//                        mRtcVideoSwitcher.joinChannel(
+//                            rtcConnection,
+//                            channelMediaOptions,
+//                            RtcEngineInstance.generalToken(),
+//                            null,
+//                            true
+//                        )
+//                        mRtcVideoSwitcher.preJoinChannel(rtcConnection)
+//                        mRtcEngine.adjustUserPlaybackSignalVolumeEx(roomInfo.ownerId.toInt(), 0, rtcConnection)
+                        //mService.startCloudPlayer()
+                    }
+                    MotionEvent.ACTION_CANCEL -> {
+                        Log.d("hugo", "onTouch ACTION_CANCEL")
+                        mRtcVideoSwitcher.leaveChannel(rtcConnection, true)
+                    }
+                    MotionEvent.ACTION_UP -> {
+                        Log.d("hugo", "onTouch ACTION_UP")
                         mRtcVideoSwitcher.preloadConnections(list.map {
                             RtcConnection(
                                 it.roomId,
@@ -184,14 +293,8 @@ class RoomListActivity : AppCompatActivity() {
                             null,
                             true
                         )
-                        mRtcVideoSwitcher.preJoinChannel(rtcConnection)
+                        //mRtcVideoSwitcher.preJoinChannel(rtcConnection)
                         mRtcEngine.adjustUserPlaybackSignalVolumeEx(roomInfo.ownerId.toInt(), 0, rtcConnection)
-                        //mService.startCloudPlayer()
-                    }
-                    MotionEvent.ACTION_CANCEL -> {
-                        mRtcVideoSwitcher.leaveChannel(rtcConnection, true)
-                    }
-                    MotionEvent.ACTION_UP -> {
                         goLiveDetailActivity(list, position, roomInfo)
                     }
                 }
@@ -221,6 +324,7 @@ class RoomListActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        isActive = false
         super.onDestroy()
         mService.destroy()
         mRtcVideoSwitcher.unloadConnections()
